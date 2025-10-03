@@ -4,910 +4,1075 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waste IQ EcoTrack Dashboards</title>
-
-    <style>
-        :root {
-            --color-dark-bg: #1e1e2f;
-            --color-card-bg: #27293d;
-            --color-accent-green: #00d27a;
-            --color-accent-blue: #00b0ff;
-            --color-text-light: #e5e5f3;
-            --color-status-red: #ff3d71;
-            --color-status-orange: #ffa800;
-            --color-status-green: #00d27a;
-            --border-radius: 12px;
-            --color-gray-text: #a0a4b9;
-        }
-
-        body {
-            background-color: var(--color-dark-bg);
-            color: var(--color-text-light);
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Navigation & Header */
-        .main-header {
-            background-color: var(--color-card-bg);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            flex-wrap: wrap;
-        }
-
-        .logo {
-            color: var(--color-accent-green);
-            font-weight: 700;
-            margin: 0 20px 0 0;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
-        .main-nav button {
-            background-color: transparent;
-            border: 1px solid transparent;
-            color: var(--color-text-light);
-            padding: 8px 10px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: color 0.3s, border-bottom 0.3s, background-color 0.3s;
-            border-radius: 6px;
-        }
-
-        .main-nav button:hover,
-        .main-nav button.active {
-            background-color: rgba(0, 176, 255, 0.1);
-            color: var(--color-accent-blue);
-            border: 1px solid var(--color-accent-blue);
-        }
-
-        /* General Dashboard Styling */
-        .dashboard-container {
-            padding: 30px;
-        }
-
-        .dashboard-view {
-            display: none;
-        }
-
-        .dashboard-view.active {
-            display: block;
-        }
-
-        .dashboard-title {
-            color: var(--color-accent-blue);
-            margin-bottom: 30px;
-            border-bottom: 2px solid rgba(0, 176, 255, 0.1);
-            padding-bottom: 10px;
-        }
-
-        .data-section {
-            background-color: var(--color-card-bg);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-top: 25px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .big-value {
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--color-accent-green);
-            margin: 5px 0 10px;
-        }
-
-        /* Contact/User Info Cards */
-        .user-info-card {
-            background-color: #31334b;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            border-left: 5px solid var(--color-status-green);
-            margin-bottom: 25px;
-        }
-
-        /* Home Page Slogan */
-        .slogan-section {
-            text-align: center;
-            padding: 60px 20px;
-            background:
-                linear-gradient(rgba(30, 30, 47, 0.8), rgba(30, 30, 47, 0.8)),
-                url('images/waste.webp') center center / cover no-repeat;
-            border-radius: var(--border-radius);
-            margin-bottom: 30px;
-            color: white;
-        }
-
-        .slogan-text {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: var(--color-accent-green);
-            line-height: 1.2;
-            text-shadow: 0 0 10px rgba(0, 210, 122, 0.5);
-            margin-bottom: 20px;
-        }
-
-        .slogan-section p {
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .image-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .image-placeholder {
-            height: 300px;
-            background-color: #31334b;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--color-gray-text);
-            font-style: italic;
-            border: 2px dashed var(--color-gray-text);
-            overflow: hidden;
-        }
-
-        .image-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Contact Section */
-        .contact-form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .contact-form-grid input,
-        .contact-form-grid textarea,
-        .contact-form-grid select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #3d405b;
-            background-color: #31334b;
-            color: var(--color-text-light);
-            box-sizing: border-box;
-        }
-
-        .contact-form-grid textarea {
-            grid-column: 1 / 3;
-            resize: vertical;
-        }
-
-        /* Admin Panel */
-        .admin-grid {
-            display: grid;
-            grid-template-columns: 1fr 3fr;
-            gap: 20px;
-        }
-
-        .admin-sidebar {
-            background-color: #31334b;
-            padding: 20px 10px;
-            border-radius: var(--border-radius);
-        }
-
-        .admin-sidebar button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 5px;
-            text-align: left;
-            background: none;
-            border: none;
-            color: var(--color-text-light);
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.2s;
-        }
-
-        .admin-sidebar button:hover,
-        .admin-sidebar button.active {
-            background-color: var(--color-dark-bg);
-            color: var(--color-accent-green);
-        }
-
-        .admin-content-section {
-            display: none;
-        }
-
-        .admin-content-section.active {
-            display: block;
-        }
-
-        /* Reusable components */
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .progress-circle {
-            width: 80px;
-            height: 80px;
-            line-height: 80px;
-            margin: 0 auto 15px;
-            border-radius: 50%;
-            background-color: #444;
-            font-weight: 700;
-            border: 5px solid var(--color-accent-green);
-        }
-
-        .status-red .progress-circle {
-            border-color: var(--color-status-red);
-        }
-
-        .status-orange .progress-circle {
-            border-color: var(--color-status-orange);
-        }
-
-        .map-and-summary-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        /* Aggregator Map Container: Must have a fixed height for Map API */
-        .map-container {
-            height: 400px;
-            /* Important for the map library */
-            background-color: #000;
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .management-summary {
-            background-color: rgba(45, 47, 75, 0.8);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            border-left: 5px solid var(--color-accent-blue);
-        }
-
-        .data-blue {
-            color: var(--color-accent-blue);
-            font-weight: bold;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background-color: #31334b;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            margin-top: 15px;
-        }
-
-        th,
-        td {
-            text-align: left;
-            padding: 12px 15px;
-            border-bottom: 1px solid #3d405b;
-        }
-
-        th {
-            background-color: #31334b;
-            font-weight: 600;
-            color: var(--color-accent-blue);
-        }
-
-        .waste-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .waste-card {
-            background-color: #31334b;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            border-left: 5px solid var(--color-accent-blue);
-        }
-
-        .purity-badge {
-            background-color: var(--color-accent-green);
-            color: var(--color-dark-bg);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .cta-button {
-            background-color: var(--color-accent-green);
-            color: var(--color-dark-bg);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-            display: block;
-            width: 100%;
-        }
-
-        .cta-button:hover {
-            background-color: #00a863;
-        }
-
-        .status-pill {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: 600;
-        }
-
-        .status-pill.status-green {
-            background-color: rgba(0, 210, 122, 0.2);
-            color: var(--color-status-green);
-        }
-
-        /* Custom Marker CSS for Google Maps (Optional, using a standard Google Marker for simplicity) */
-
-        @media (max-width: 768px) {
-            .main-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .main-nav {
-                margin-top: 10px;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .map-and-summary-grid,
-            .contact-form-grid,
-            .admin-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .slogan-text {
-                font-size: 1.8em;
-            }
-        }
-    </style>
+    <title>Waste IQ EcoTrack - Smart Waste Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-recycle"></i>
+                <span>Waste IQ EcoTrack</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-link active" data-target="home">Home</a>
+                <a href="#" class="nav-link" data-target="household">Household</a>
+                <a href="#" class="nav-link" data-target="aggregator">Aggregator</a>
+                <a href="#" class="nav-link" data-target="recycler">Recycler</a>
+                <a href="#" class="nav-link" data-target="marketplace">Marketplace</a>
+                <a href="#" class="nav-link" data-target="admin">Admin</a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
-
-    <header class="main-header">
-        <h1 class="logo">Waste IQ EcoTrack</h1>
-        <nav class="main-nav">
-            <button id="btn-home" onclick="showDashboard('home')" class="active">Home 🌍</button>
-            <button id="btn-household" onclick="showDashboard('household')">Household 🏠</button>
-            <button id="btn-aggregator" onclick="showDashboard('aggregator')">Aggregator 🏢</button>
-            <button id="btn-recycler" onclick="showDashboard('recycler')">Recycler 🔄</button>
-            <button id="btn-admin" onclick="showDashboard('admin')">Admin ⚙️</button>
-            <button id="btn-contact" onclick="showDashboard('contact')">Contact 📞</button>
-        </nav>
-    </header>
-
-    <main class="dashboard-container">
-
-        <div id="home" class="dashboard-view active">
-            <section class="slogan-section">
-                <p style="font-size: 1.2em; color: var(--color-gray-text); margin-bottom: 10px;">The Future is Clean,
-                    Green, and Smart.</p>
-                <h1 class="slogan-text">
-                    Don't Just Dispose. <br>Design a Better Tomorrow.
-                </h1>
-                <p style="font-size: 1.4em; color: var(--color-text-light);">
-                    Beyond the Bin: Building Tomorrow
-                </p>
-            </section>
-
-            <section class="data-section">
-                <h2 style="color: var(--color-accent-blue);">Our Vision: Before and After</h2>
-                <div class="image-gallery">
-                    <div class="image-placeholder"><img src="images/DSC00339.jpeg"
-                            alt="Smart Bin Model"></div>
-                    <div class="image-placeholder"><img
-                            src="images/images.jpeg"
-                            alt="People disposing waste properly"></div>
-                    <div class="image-placeholder"><img
-                            src="images/bine.webp"
-                            alt="Environment before proper disposal"></div>
-                    <div class="image-placeholder"><img
-                            src="images/download.jpeg"
-                            alt="Environment after proper disposal"></div>
+    <!-- Home Section -->
+    <section id="home" class="section active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Smart Waste Management for a <span class="highlight">Cleaner Future</span></h1>
+                <p>Waste IQ EcoTrack revolutionizes waste management with IoT-enabled smart bins, real-time monitoring,
+                    and an efficient marketplace connecting households, aggregators, and recyclers.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary">Get Started</button>
+                    <button class="btn btn-secondary">Watch Demo</button>
                 </div>
-            </section>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-bin">
+                    <div class="bin-body">
+                        <div class="fill-level" style="height: 100%">
+                            <img src="images/2.jpeg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="household" class="dashboard-view">
-            <h2 class="dashboard-title">My Eco-Tracker Dashboard 🏠</h2>
-            <div class="user-info-card">
-                <p style="margin: 0; color: var(--color-gray-text);">Household Contact: <strong
-                        style="color: var(--color-text-light);">Jane Doe | +254 7XX XXX XXX</strong></p>
+        <div class="features">
+            <h2>How Waste IQ EcoTrack Works</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <h3>Smart Bins</h3>
+                    <p>IoT-enabled bins with fill-level sensors and waste classification cameras.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>Real-Time Monitoring</h3>
+                    <p>Track bin status, collection routes, and waste inventory in real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <h3>Recycling Marketplace</h3>
+                    <p>Connect waste aggregators with recyclers for efficient material exchange.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>Rewards System</h3>
+                    <p>Earn points for proper waste disposal and redeem for discounts.</p>
+                </div>
             </div>
-            <section class="status-grid">
-                <div class="status-card status-orange">
-                    <div class="progress-circle">80%</div>
-                    <h3>Fill Level</h3>
-                    <p>Collection scheduled soon.</p>
-                </div>
-                <div class="status-card">
-                    <div class="progress-circle" style="border-color: var(--color-accent-blue);">♻️</div>
-                    <h3>Waste Classified</h3>
-                    <p class="big-value" style="color: var(--color-accent-blue);">Plastic, PET</p>
-                </div>
-                <div class="status-card">
-                    <div class="progress-circle" style="border-color: var(--color-accent-blue);">⚖️</div>
-                    <h3>Current Weight</h3>
-                    <p class="big-value">5.2 kg</p>
-                </div>
-                <div class="status-card">
-                    <div class="progress-circle" style="border-color: var(--color-accent-green);">🏆</div>
-                    <h3>EcoPoints Earned</h3>
-                    <p class="big-value">1,250</p><button class="cta-button">Redeem Now</button>
-                </div>
-            </section>
-            <section class="data-section">
-                <h3>Waste Breakdown (Last 30 Days)</h3>
-                <p>Placeholder for interactive waste statistic charts.</p>
-            </section>
+        </div>
+    </section>
+
+    <!-- Household Dashboard -->
+    <section id="household" class="section">
+        <div class="dashboard-header">
+            <h1>Household Dashboard</h1>
+            <p>Track your waste, get notifications, and earn rewards</p>
         </div>
 
-        <div id="aggregator" class="dashboard-view">
-            <h2 class="dashboard-title">Aggregator Command Center 🏢</h2>
-            <div class="user-info-card" style="border-left-color: var(--color-accent-blue);">
-                <p style="margin: 0; color: var(--color-gray-text);">Aggregator Contact: <strong
-                        style="color: var(--color-text-light);">EcoLogistics Hub | +254 7XX XXX XXX</strong></p>
+        <div class="dashboard-container">
+            <div class="dashboard-sidebar">
+                <div class="sidebar-menu">
+                    <a href="#" class="sidebar-item active" data-panel="bin-status">Bin Status</a>
+                    <a href="#" class="sidebar-item" data-panel="statistics">Waste Statistics</a>
+                    <a href="#" class="sidebar-item" data-panel="rewards">Rewards</a>
+                    <a href="#" class="sidebar-item" data-panel="settings">Settings</a>
+                </div>
             </div>
-            <section class="map-and-summary-grid">
-                <div id="aggregator-map" class="map-container">
-                    <p style="color: white; text-align: center; margin-top: 150px;">Loading Google Map...</p>
+
+            <div class="dashboard-content">
+                <!-- Bin Status Panel -->
+                <div class="content-panel active" id="bin-status">
+                    <div class="panel-header">
+                        <h2>Smart Bin Status</h2>
+                        <div class="notification-badge">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge">2</span>
+                        </div>
+                    </div>
+
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <h3>Kitchen Bin</h3>
+                            <div class="fill-indicator">
+                                <div class="fill-bar">
+                                    <div class="fill-progress" style="width: 80%"></div>
+                                </div>
+                                <span class="fill-percent">80% Full</span>
+                            </div>
+                            <div class="waste-info">
+                                <div class="waste-type">
+                                    <i class="fas fa-apple-alt"></i>
+                                    <span>Organic Waste</span>
+                                </div>
+                                <div class="waste-weight">
+                                    <i class="fas fa-weight-hanging"></i>
+                                    <span>3.2 kg</span>
+                                </div>
+                            </div>
+                            <div class="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>123 Green Street</span>
+                            </div>
+                            <div class="notification alert">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Bin is 80% full - collection scheduled for tomorrow</span>
+                            </div>
+                        </div>
+
+                        <div class="status-card">
+                            <h3>Recycling Bin</h3>
+                            <div class="fill-indicator">
+                                <div class="fill-bar">
+                                    <div class="fill-progress" style="width: 45%"></div>
+                                </div>
+                                <span class="fill-percent">45% Full</span>
+                            </div>
+                            <div class="waste-info">
+                                <div class="waste-type">
+                                    <i class="fas fa-wine-bottle"></i>
+                                    <span>Plastic & Glass</span>
+                                </div>
+                                <div class="waste-weight">
+                                    <i class="fas fa-weight-hanging"></i>
+                                    <span>1.8 kg</span>
+                                </div>
+                            </div>
+                            <div class="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>123 Green Street</span>
+                            </div>
+                            <div class="notification info">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Mixed recycling - well sorted!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="map-container small">
+                        <h3>Bin Location</h3>
+                        <div id="household-map"></div>
+                    </div>
                 </div>
-                <div class="management-summary">
-                    <h3>Inventory Summary</h3>
-                    <p>Total Available Waste: <span class="data-blue">120 Tons</span></p>
-                    <p>New Recycler Requests: <span class="data-blue">12</span></p>
-                    <button class="cta-button" style="display:block; width: auto;">View Collectors & Routes</button>
+
+                <!-- Statistics Panel -->
+                <div class="content-panel" id="statistics">
+                    <div class="panel-header">
+                        <h2>Waste Statistics</h2>
+                        <div class="time-filter">
+                            <select id="timeRange">
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Waste</h3>
+                            <div class="stat-value">24.5 kg</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>12% from last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Recycling Rate</h3>
+                            <div class="stat-value">68%</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>5% from last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Points Earned</h3>
+                            <div class="stat-value">350</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>45 this week</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-card">
+                            <h3>Waste Generation</h3>
+                            <canvas id="wasteChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Waste Breakdown</h3>
+                            <canvas id="breakdownChart"></canvas>
+                        </div>
+                    </div>
                 </div>
-            </section>
-            <section class="data-section">
-                <h3>Real-Time Bin Monitoring</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Bin ID</th>
-                            <th>Location</th>
-                            <th>Waste Type</th>
-                            <th>Fill Level</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>H001</td>
-                            <td>Centra City</td>
-                            <td>Plastic</td>
-                            <td><progress value="95" max="100"></progress> 95%</td>
-                            <td><span class="status-pill"
-                                    style="background-color: rgba(255, 61, 113, 0.2); color: var(--color-status-red);">Full</span>
-                            </td>
-                            <td><button class="small-button cta-button" style="width: auto;">Schedule</button></td>
-                        </tr>
-                        <tr>
-                            <td>H002</td>
-                            <td>West Bridge</td>
-                            <td>Organic</td>
-                            <td><progress value="50" max="100"></progress> 50%</td>
-                            <td><span class="status-pill status-green">OK</span></td>
-                            <td><button class="small-button cta-button"
-                                    style="width: auto; background-color: gray;">Ignore</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+
+                <!-- Rewards Panel -->
+                <div class="content-panel" id="rewards">
+                    <div class="panel-header">
+                        <h2>Rewards System</h2>
+                        <div class="points-balance">
+                            <span class="points-label">Your Points:</span>
+                            <span class="points-value">350</span>
+                        </div>
+                    </div>
+
+                    <div class="rewards-info">
+                        <div class="points-breakdown">
+                            <h3>How You Earn Points</h3>
+                            <ul>
+                                <li>Proper sorting: <span class="points">+10 pts</span></li>
+                                <li>On-time disposal: <span class="points">+5 pts</span></li>
+                                <li>Recycling participation: <span class="points">+15 pts</span></li>
+                                <li>Refer a friend: <span class="points">+50 pts</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="redeem-options">
+                            <h3>Redeem Your Points</h3>
+                            <div class="rewards-grid">
+                                <div class="reward-card">
+                                    <div class="reward-icon">
+                                        <i class="fas fa-tag"></i>
+                                    </div>
+                                    <h4>$5 Voucher</h4>
+                                    <p>Local grocery store</p>
+                                    <div class="reward-cost">100 pts</div>
+                                    <button class="btn btn-reward">Redeem</button>
+                                </div>
+                                <div class="reward-card">
+                                    <div class="reward-icon">
+                                        <i class="fas fa-mug-hot"></i>
+                                    </div>
+                                    <h4>Coffee Voucher</h4>
+                                    <p>Local café</p>
+                                    <div class="reward-cost">150 pts</div>
+                                    <button class="btn btn-reward">Redeem</button>
+                                </div>
+                                <div class="reward-card">
+                                    <div class="reward-icon">
+                                        <i class="fas fa-seedling"></i>
+                                    </div>
+                                    <h4>Plant Sapling</h4>
+                                    <p>Community garden</p>
+                                    <div class="reward-cost">200 pts</div>
+                                    <button class="btn btn-reward">Redeem</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Panel -->
+                <div class="content-panel" id="settings">
+                    <div class="panel-header">
+                        <h2>Settings</h2>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>Notification Preferences</h3>
+                            <div class="setting-item">
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Bin full alerts</span>
+                            </div>
+                            <div class="setting-item">
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Collection reminders</span>
+                            </div>
+                            <div class="setting-item">
+                                <label class="toggle">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Rewards notifications</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Bin Management</h3>
+                            <div class="setting-item">
+                                <label>Collection Frequency</label>
+                                <select>
+                                    <option>Weekly</option>
+                                    <option>Bi-weekly</option>
+                                    <option>Monthly</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>Preferred Collection Day</label>
+                                <select>
+                                    <option>Monday</option>
+                                    <option>Tuesday</option>
+                                    <option>Wednesday</option>
+                                    <option>Thursday</option>
+                                    <option>Friday</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Aggregator Dashboard -->
+    <section id="aggregator" class="section">
+        <div class="dashboard-header">
+            <h1>Aggregator Dashboard</h1>
+            <p>Manage all bins, waste inventory, and collection routes</p>
         </div>
 
-        <div id="recycler" class="dashboard-view">
-            <h2 class="dashboard-title">Recycler Source Manager 🔄</h2>
-            <div class="user-info-card" style="border-left-color: var(--color-status-red);">
-                <p style="margin: 0; color: var(--color-gray-text);">Recycler Contact: <strong
-                        style="color: var(--color-text-light);">PureMaterials Inc. | +254 7XX XXX XXX</strong></p>
+        <div class="dashboard-container">
+            <div class="dashboard-sidebar">
+                <div class="sidebar-menu">
+                    <a href="#" class="sidebar-item active" data-panel="aggregator-map">Bin Map</a>
+                    <a href="#" class="sidebar-item" data-panel="bin-monitoring">Bin Monitoring</a>
+                    <a href="#" class="sidebar-item" data-panel="inventory">Inventory</a>
+                    <a href="#" class="sidebar-item" data-panel="collectors">Collectors</a>
+                    <a href="#" class="sidebar-item" data-panel="reports">Reports</a>
+                </div>
             </div>
-            <section class="data-section marketplace-catalog">
-                <div class="filter-bar" style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="text" placeholder="Search by Material..."
-                        style="flex-grow: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background-color: #31334b; color: var(--color-text-light);">
-                    <select
-                        style="padding: 10px; border-radius: 5px; border: 1px solid #444; background-color: #31334b; color: var(--color-gray-text);">
-                        <option>Filter by Type</option>
-                        <option>PET Plastic</option>
-                        <option>Cardboard</option>
-                        <option>Aluminum</option>
+
+            <div class="dashboard-content">
+                <!-- Bin Map Panel -->
+                <div class="content-panel active" id="aggregator-map">
+                    <div class="panel-header">
+                        <h2>Real-Time Bin Map</h2>
+                        <div class="map-legend">
+                            <div class="legend-item">
+                                <div class="legend-color green"></div>
+                                <span>OK (0-70%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color orange"></div>
+                                <span>Nearly Full (70-90%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color red"></div>
+                                <span>Full (90-100%)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="map-container large">
+                        <div id="aggregator-map-view"></div>
+                    </div>
+                </div>
+
+                <!-- Bin Monitoring Panel -->
+                <div class="content-panel" id="bin-monitoring">
+                    <div class="panel-header">
+                        <h2>Bin Monitoring</h2>
+                        <div class="search-filter">
+                            <input type="text" placeholder="Search bins...">
+                            <select>
+                                <option>All Status</option>
+                                <option>OK</option>
+                                <option>Nearly Full</option>
+                                <option>Full</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Bin ID</th>
+                                    <th>Location</th>
+                                    <th>Waste Type</th>
+                                    <th>Fill Level</th>
+                                    <th>Weight</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>BIN-001</td>
+                                    <td>Green Street Area</td>
+                                    <td>Organic</td>
+                                    <td>
+                                        <div class="progress-cell">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 80%"></div>
+                                            </div>
+                                            <span>80%</span>
+                                        </div>
+                                    </td>
+                                    <td>15.2 kg</td>
+                                    <td><span class="status-badge warning">Nearly Full</span></td>
+                                    <td>
+                                        <button class="btn-action"><i class="fas fa-route"></i></button>
+                                        <button class="btn-action"><i class="fas fa-info-circle"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>BIN-002</td>
+                                    <td>City Center</td>
+                                    <td>Plastic</td>
+                                    <td>
+                                        <div class="progress-cell">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 45%"></div>
+                                            </div>
+                                            <span>45%</span>
+                                        </div>
+                                    </td>
+                                    <td>8.7 kg</td>
+                                    <td><span class="status-badge success">OK</span></td>
+                                    <td>
+                                        <button class="btn-action"><i class="fas fa-route"></i></button>
+                                        <button class="btn-action"><i class="fas fa-info-circle"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>BIN-003</td>
+                                    <td>Industrial Zone</td>
+                                    <td>Metal</td>
+                                    <td>
+                                        <div class="progress-cell">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 95%"></div>
+                                            </div>
+                                            <span>95%</span>
+                                        </div>
+                                    </td>
+                                    <td>22.5 kg</td>
+                                    <td><span class="status-badge danger">Full</span></td>
+                                    <td>
+                                        <button class="btn-action"><i class="fas fa-route"></i></button>
+                                        <button class="btn-action"><i class="fas fa-info-circle"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Inventory Panel -->
+                <div class="content-panel" id="inventory">
+                    <div class="panel-header">
+                        <h2>Inventory Management</h2>
+                        <button class="btn btn-primary">Export Data</button>
+                    </div>
+
+                    <div class="inventory-summary">
+                        <div class="summary-card">
+                            <h3>Total Inventory</h3>
+                            <div class="summary-value">125.8 tons</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Available for Booking</h3>
+                            <div class="summary-value">78.3 tons</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Booked This Month</h3>
+                            <div class="summary-value">47.5 tons</div>
+                        </div>
+                    </div>
+
+                    <div class="inventory-table">
+                        <h3>Waste by Type</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Waste Type</th>
+                                    <th>Quantity</th>
+                                    <th>Available</th>
+                                    <th>Booked</th>
+                                    <th>Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Plastic</td>
+                                    <td>45.2 tons</td>
+                                    <td>28.7 tons</td>
+                                    <td>16.5 tons</td>
+                                    <td>Central Facility</td>
+                                </tr>
+                                <tr>
+                                    <td>Metal</td>
+                                    <td>32.1 tons</td>
+                                    <td>18.4 tons</td>
+                                    <td>13.7 tons</td>
+                                    <td>North Facility</td>
+                                </tr>
+                                <tr>
+                                    <td>Organic</td>
+                                    <td>28.5 tons</td>
+                                    <td>15.2 tons</td>
+                                    <td>13.3 tons</td>
+                                    <td>South Facility</td>
+                                </tr>
+                                <tr>
+                                    <td>Glass</td>
+                                    <td>20.0 tons</td>
+                                    <td>16.0 tons</td>
+                                    <td>4.0 tons</td>
+                                    <td>East Facility</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recycler Dashboard -->
+    <section id="recycler" class="section">
+        <div class="dashboard-header">
+            <h1>Recycler Dashboard</h1>
+            <p>Book and track specific waste types for recycling</p>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="dashboard-sidebar">
+                <div class="sidebar-menu">
+                    <a href="#" class="sidebar-item active" data-panel="recycler-marketplace">Marketplace</a>
+                    <a href="#" class="sidebar-item" data-panel="my-bookings">My Bookings</a>
+                    <a href="#" class="sidebar-item" data-panel="recycler-payments">Payments</a>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <!-- Marketplace Panel -->
+                <div class="content-panel active" id="recycler-marketplace">
+                    <div class="panel-header">
+                        <h2>Available Waste Inventory</h2>
+                        <div class="search-filter">
+                            <input type="text" placeholder="Search waste...">
+                            <select>
+                                <option>All Types</option>
+                                <option>Plastic</option>
+                                <option>Metal</option>
+                                <option>Glass</option>
+                                <option>Organic</option>
+                                <option>Paper</option>
+                            </select>
+                            <select>
+                                <option>Any Location</option>
+                                <option>Central</option>
+                                <option>North</option>
+                                <option>South</option>
+                                <option>East</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="waste-grid">
+
+    <!-- PET Plastic -->
+    <div class="waste-card">
+        <div class="waste-header">
+            <div class="waste-type-icon">
+                <i class="fas fa-wine-bottle"></i>
+            </div>
+            <div class="waste-status available">Available</div>
+        </div>
+        <h3>PET Plastic</h3>
+        <div class="waste-details">
+            <div class="detail">
+                <i class="fas fa-weight-hanging"></i>
+                <span>28.7 tons</span>
+            </div>
+            <div class="detail">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Central Facility</span>
+            </div>
+            <div class="detail">
+                <i class="fas fa-tag"></i>
+                <span>$120/ton</span>
+            </div>
+            <div class="detail purity">
+                <i class="fas fa-leaf"></i>
+                <span>Purity: 92%</span>
+                <div class="purity-bar">
+                    <div class="purity-fill" style="width:92%"></div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-block">Book Now</button>
+    </div>
+
+    <!-- Aluminum Scrap -->
+    <div class="waste-card">
+        <div class="waste-header">
+            <div class="waste-type-icon">
+                <i class="fas fa-cube"></i>
+            </div>
+            <div class="waste-status available">Available</div>
+        </div>
+        <h3>Aluminum Scrap</h3>
+        <div class="waste-details">
+            <div class="detail">
+                <i class="fas fa-weight-hanging"></i>
+                <span>18.4 tons</span>
+            </div>
+            <div class="detail">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>North Facility</span>
+            </div>
+            <div class="detail">
+                <i class="fas fa-tag"></i>
+                <span>$250/ton</span>
+            </div>
+            <div class="detail purity">
+                <i class="fas fa-leaf"></i>
+                <span>Purity: 97%</span>
+                <div class="purity-bar">
+                    <div class="purity-fill" style="width:97%"></div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-block">Book Now</button>
+    </div>
+
+    <!-- Clear Glass -->
+    <div class="waste-card">
+        <div class="waste-header">
+            <div class="waste-type-icon">
+                <i class="fas fa-wine-glass-alt"></i>
+            </div>
+            <div class="waste-status available">Available</div>
+        </div>
+        <h3>Clear Glass</h3>
+        <div class="waste-details">
+            <div class="detail">
+                <i class="fas fa-weight-hanging"></i>
+                <span>16.0 tons</span>
+            </div>
+            <div class="detail">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>East Facility</span>
+            </div>
+            <div class="detail">
+                <i class="fas fa-tag"></i>
+                <span>$80/ton</span>
+            </div>
+            <div class="detail purity">
+                <i class="fas fa-leaf"></i>
+                <span>Purity: 89%</span>
+                <div class="purity-bar">
+                    <div class="purity-fill" style="width:89%"></div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-block">Book Now</button>
+    </div>
+</div>
+
+                </div>
+
+                <!-- My Bookings Panel -->
+                <div class="content-panel" id="my-bookings">
+                    <div class="panel-header">
+                        <h2>My Bookings</h2>
+                        <div class="booking-filter">
+                            <select>
+                                <option>All Status</option>
+                                <option>Awaiting Pickup</option>
+                                <option>In Transit</option>
+                                <option>Delivered</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bookings-list">
+                        <div class="booking-card">
+                            <div class="booking-header">
+                                <h3>PET Plastic - Order #PL-2837</h3>
+                                <span class="status-badge warning">Awaiting Pickup</span>
+                            </div>
+                            <div class="booking-details">
+                                <div class="detail">
+                                    <strong>Quantity:</strong> 5.2 tons
+                                </div>
+                                <div class="detail">
+                                    <strong>Location:</strong> Central Facility
+                                </div>
+                                <div class="detail">
+                                    <strong>Price:</strong> $624
+                                </div>
+                                <div class="detail">
+                                    <strong>Scheduled:</strong> Oct 30, 2023
+                                </div>
+                            </div>
+                            <div class="booking-actions">
+                                <button class="btn btn-outline">Track Shipment</button>
+                                <button class="btn btn-primary">Reschedule</button>
+                            </div>
+                        </div>
+
+                        <div class="booking-card">
+                            <div class="booking-header">
+                                <h3>Aluminum Scrap - Order #AL-1942</h3>
+                                <span class="status-badge success">Delivered</span>
+                            </div>
+                            <div class="booking-details">
+                                <div class="detail">
+                                    <strong>Quantity:</strong> 3.8 tons
+                                </div>
+                                <div class="detail">
+                                    <strong>Location:</strong> North Facility
+                                </div>
+                                <div class="detail">
+                                    <strong>Price:</strong> $950
+                                </div>
+                                <div class="detail">
+                                    <strong>Delivered:</strong> Oct 25, 2023
+                                </div>
+                            </div>
+                            <div class="booking-actions">
+                                <button class="btn btn-outline">View Receipt</button>
+                                <button class="btn btn-primary">Reorder</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marketplace Page -->
+    <section id="marketplace" class="section">
+        <div class="dashboard-header">
+            <h1>Waste Marketplace</h1>
+            <p>Central marketplace for recyclers & aggregators</p>
+        </div>
+
+        <div class="marketplace-container">
+            <div class="marketplace-filters">
+                <h3>Filters</h3>
+                <div class="filter-group">
+                    <label>Waste Type</label>
+                    <select>
+                        <option>All Types</option>
+                        <option>Plastic</option>
+                        <option>Metal</option>
+                        <option>Glass</option>
+                        <option>Organic</option>
+                        <option>Paper</option>
                     </select>
-                    <button class="cta-button" style="width: auto;">Filter</button>
                 </div>
-                <div class="waste-grid">
-                    <div class="waste-card">
-                        <h4 class="waste-type-header">PET Plastic</h4>
-                        <p>Quantity: <span class="data-blue">15 Tons</span></p>
-                        <p>Purity Score: <span class="purity-badge">99.5% ✨</span></p>
-                        <p>Price/Ton: $500</p>
-                        <p>Source: Site A</p><button class="cta-button">Add to Booking</button>
-                    </div>
-                    <div class="waste-card">
-                        <h4 class="waste-type-header">Cardboard</h4>
-                        <p>Quantity: <span class="data-blue">25 Tons</span></p>
-                        <p>Purity Score: <span class="purity-badge">98.2% ✨</span></p>
-                        <p>Price/Ton: $300</p>
-                        <p>Source: Site B</p><button class="cta-button">Add to Booking</button>
+                <div class="filter-group">
+                    <label>Location</label>
+                    <select>
+                        <option>All Locations</option>
+                        <option>Central</option>
+                        <option>North</option>
+                        <option>South</option>
+                        <option>East</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Quantity Range (tons)</label>
+                    <div class="range-inputs">
+                        <input type="number" placeholder="Min" value="0">
+                        <span>to</span>
+                        <input type="number" placeholder="Max" value="50">
                     </div>
                 </div>
-            </section>
-            <section class="data-section">
-                <h3>My Booked Shipments</h3>
-                <p>Placeholder for the shipment tracking table and payment history.</p>
-            </section>
+                <button class="btn btn-primary btn-block">Apply Filters</button>
+            </div>
+
+            <div class="marketplace-content">
+                <div class="marketplace-header">
+                    <h2>Waste Catalog</h2>
+                    <div class="cart-summary">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Cart (2 items)</span>
+                    </div>
+                </div>
+
+                <div class="waste-catalog">
+                    <!-- Waste cards would be repeated here -->
+                    <div class="catalog-item">
+                        <div class="item-image">
+                            <i class="fas fa-wine-bottle"></i>
+                        </div>
+                        <div class="item-details">
+                            <h3>PET Plastic Flakes</h3>
+                            <p>High-quality PET plastic flakes, ready for processing</p>
+                            <div class="item-meta">
+                                <span><i class="fas fa-weight-hanging"></i> 28.7 tons</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Central Facility</span>
+                                <span><i class="fas fa-tag"></i> $120/ton</span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <div class="catalog-item">
+                        <div class="item-image">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div class="item-details">
+                            <h3>Aluminum Scrap</h3>
+                            <p>Clean aluminum scrap, sorted and compacted</p>
+                            <div class="item-meta">
+                                <span><i class="fas fa-weight-hanging"></i> 18.4 tons</span>
+                                <span><i class="fas fa-map-marker-alt"></i> North Facility</span>
+                                <span><i class="fas fa-tag"></i> $250/ton</span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel -->
+    <section id="admin" class="section">
+        <div class="dashboard-header">
+            <h1>Admin Panel</h1>
+            <p>Control and monitor the entire platform</p>
         </div>
 
-        <div id="admin" class="dashboard-view">
-            <h2 class="dashboard-title">Platform Administration ⚙️</h2>
-            <div class="admin-grid">
-                <div class="admin-sidebar">
-                    <button id="admin-btn-users" onclick="showAdminSection('admin-users')" class="active">User
-                        Management</button>
-                    <button id="admin-btn-monitoring" onclick="showAdminSection('admin-monitoring')">System
-                        Monitoring</button>
-                    <button id="admin-btn-analytics" onclick="showAdminSection('admin-analytics')">Analytics
-                        Dashboard</button>
-                    <button id="admin-btn-settings" onclick="showAdminSection('admin-settings')">Platform
-                        Settings</button>
+        <div class="dashboard-container">
+            <div class="dashboard-sidebar">
+                <div class="sidebar-menu">
+                    <a href="#" class="sidebar-item active" data-panel="user-management">User Management</a>
+                    <a href="#" class="sidebar-item" data-panel="system-monitoring">System Monitoring</a>
+                    <a href="#" class="sidebar-item" data-panel="admin-analytics">Analytics</a>
+                    <a href="#" class="sidebar-item" data-panel="admin-settings">Settings</a>
                 </div>
-                <div class="admin-content">
-                    <div id="admin-users" class="data-section admin-content-section active" style="margin-top: 0;">
-                        <h3 style="color: var(--color-accent-green);">User Management</h3>
-                        <p style="color: var(--color-gray-text);">Manage roles and access levels for all Household,
-                            Aggregator, and Recycler accounts.</p>
-                        <table>
+            </div>
+
+            <div class="dashboard-content">
+                <!-- User Management Panel -->
+                <div class="content-panel active" id="user-management">
+                    <div class="panel-header">
+                        <h2>User Management</h2>
+                        <button class="btn btn-primary">Add New User</button>
+                    </div>
+
+                    <div class="user-stats">
+                        <div class="stat-card">
+                            <h3>Total Users</h3>
+                            <div class="stat-value">1,247</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Households</h3>
+                            <div class="stat-value">892</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Aggregators</h3>
+                            <div class="stat-value">28</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Recyclers</h3>
+                            <div class="stat-value">17</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>User ID</th>
+                                    <th>Name</th>
                                     <th>Role</th>
-                                    <th>Email</th>
-                                    <th>Action</th>
+                                    <th>Join Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>A001</td>
+                                    <td>USR-2831</td>
+                                    <td>John Smith</td>
+                                    <td>Household</td>
+                                    <td>Oct 12, 2023</td>
+                                    <td><span class="status-badge success">Active</span></td>
+                                    <td>
+                                        <button class="btn-action"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-action"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>USR-2832</td>
+                                    <td>Green Waste Co.</td>
                                     <td>Aggregator</td>
-                                    <td>aggregator@email.com</td>
-                                    <td><button class="cta-button"
-                                            style="width: auto; background-color: #ff3d71;">Suspend</button></td>
+                                    <td>Oct 10, 2023</td>
+                                    <td><span class="status-badge success">Active</span></td>
+                                    <td>
+                                        <button class="btn-action"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-action"><i class="fas fa-trash"></i></button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>R005</td>
+                                    <td>USR-2833</td>
+                                    <td>EcoRecycle Ltd</td>
                                     <td>Recycler</td>
-                                    <td>pureinc@email.com</td>
-                                    <td><button class="cta-button" style="width: auto; background-color: #ffa800;">Edit
-                                            Role</button></td>
+                                    <td>Oct 5, 2023</td>
+                                    <td><span class="status-badge warning">Pending</span></td>
+                                    <td>
+                                        <button class="btn-action"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-action"><i class="fas fa-trash"></i></button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                </div>
 
-                    <div id="admin-monitoring" class="data-section admin-content-section" style="margin-top: 0;">
-                        <h3 style="color: var(--color-accent-green);">System Monitoring</h3>
-                        <p style="color: var(--color-gray-text);">Monitor server health, data logs, and performance
-                            metrics.</p>
-                        <p>Server Status: <span class="status-pill status-green">Operational</span></p>
-                        <p>API Latency: <span class="data-blue">25ms</span></p>
+                <!-- System Monitoring Panel -->
+                <div class="content-panel" id="system-monitoring">
+                    <div class="panel-header">
+                        <h2>System Monitoring</h2>
+                        <div class="system-status">
+                            <span class="status-indicator online"></span>
+                            <span>All Systems Operational</span>
+                        </div>
                     </div>
 
-                    <div id="admin-analytics" class="data-section admin-content-section" style="margin-top: 0;">
-                        <h3 style="color: var(--color-accent-green);">Analytics Dashboard</h3>
-                        <p style="color: var(--color-gray-text);">Overview of waste managed and environmental impact.
-                        </p>
-                        <h4>Waste Managed by Month (Tons)</h4>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Month</th>
-                                    <th>Plastic</th>
-                                    <th>Organic</th>
-                                    <th>Paper</th>
-                                    <th>Metal</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Jan 2024</td>
-                                    <td>15</td>
-                                    <td>30</td>
-                                    <td>20</td>
-                                    <td>5</td>
-                                    <td>70</td>
-                                </tr>
-                                <tr>
-                                    <td>Feb 2024</td>
-                                    <td>18</td>
-                                    <td>35</td>
-                                    <td>22</td>
-                                    <td>6</td>
-                                    <td>81</td>
-                                </tr>
-                                <tr>
-                                    <td>Mar 2024</td>
-                                    <td>20</td>
-                                    <td>40</td>
-                                    <td>25</td>
-                                    <td>7</td>
-                                    <td>92</td>
-                                </tr>
-                                <tr>
-                                    <td>Apr 2024</td>
-                                    <td>22</td>
-                                    <td>42</td>
-                                    <td>28</td>
-                                    <td>8</td>
-                                    <td>100</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <p style="margin-top: 20px;">Total CO₂ Saved: <span class="big-value"
-                                style="font-size: 1.5em; color: var(--color-accent-green);">5000 Tons</span></p>
-                        <p>Recycling Rate: <span class="big-value"
-                                style="font-size: 1.5em; color: var(--color-accent-blue);">75%</span></p>
-                    </div>
+                    <div class="system-grid">
+                        <div class="system-card">
+                            <h3>Server Health</h3>
+                            <div class="server-stats">
+                                <div class="server-metric">
+                                    <span>CPU Usage</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 45%"></div>
+                                    </div>
+                                    <span>45%</span>
+                                </div>
+                                <div class="server-metric">
+                                    <span>Memory Usage</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 62%"></div>
+                                    </div>
+                                    <span>62%</span>
+                                </div>
+                                <div class="server-metric">
+                                    <span>Disk Usage</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 38%"></div>
+                                    </div>
+                                    <span>38%</span>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div id="admin-settings" class="data-section admin-content-section" style="margin-top: 0;">
-                        <h3 style="color: var(--color-accent-green);">Platform Settings</h3>
-                        <p style="color: var(--color-gray-text);">Configure reward system, booking rules, and pricing.
-                        </p>
-                        <label for="reward-points" style="display: block; margin-bottom: 5px;">Points per KG:</label>
-                        <input type="number" id="reward-points" value="10"
-                            style="width: 100px; padding: 8px; border-radius: 5px; border: 1px solid #444; background-color: #31334b; color: var(--color-text-light);">
-                        <button class="cta-button" style="width: auto; margin-top: 15px;">Save Settings</button>
+                        <div class="system-card">
+                            <h3>Error Reports</h3>
+                            <div class="error-list">
+                                <div class="error-item">
+                                    <div class="error-level warning">Warning</div>
+                                    <div class="error-message">Bin BIN-007 sensor offline</div>
+                                    <div class="error-time">2 hours ago</div>
+                                </div>
+                                <div class="error-item">
+                                    <div class="error-level info">Info</div>
+                                    <div class="error-message">API rate limit approaching</div>
+                                    <div class="error-time">5 hours ago</div>
+                                </div>
+                                <div class="error-item">
+                                    <div class="error-level danger">Critical</div>
+                                    <div class="error-message">Database connection timeout</div>
+                                    <div class="error-time">1 day ago</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div id="contact" class="dashboard-view">
-            <h2 class="dashboard-title">Get in Touch 📞</h2>
-            <div class="contact-form-grid">
-                <div style="grid-column: 1 / 3;">
-                    <p style="font-size: 1.1em; color: var(--color-gray-text);">We're here to help you revolutionize
-                        waste management. Drop us a line!</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Waste IQ EcoTrack</h3>
+                <p>Smart waste management for a cleaner, sustainable future.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
                 </div>
-                <input type="text" placeholder="Your Name (Required)">
-                <input type="email" placeholder="Your Email (Required)">
-                <input type="text" placeholder="Subject">
-                <select
-                    style="padding: 12px; border-radius: 6px; border: 1px solid #3d405b; background-color: #31334b; color: var(--color-gray-text);">
-                    <option>Inquiry Type: General</option>
-                    <option>Technical Support</option>
-                    <option>Partnership/Sales</option>
-                </select>
-                <textarea rows="5" placeholder="Your Message..."></textarea>
-                <button class="cta-button" style="grid-column: 1 / 3;">Send Message</button>
             </div>
-            <section class="data-section">
-                <h3>Our Details</h3>
-                <p><strong>Email:</strong> support@wasteiqecotrack.com</p>
-                <p><strong>Phone:</strong> +254 7XX YYY ZZZ</p>
-                <p><strong>Office:</strong> EcoTrack HQ, Smart City, Kenya</p>
-            </section>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">How It Works</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> support@wasteiqtrack.com</li>
+                    <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Green Street, Eco City</li>
+                </ul>
+            </div>
         </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Waste IQ EcoTrack. All rights reserved.</p>
+        </div>
+    </footer>
 
-    </main>
-
-    <script>
-        // Google Maps Global Objects
-        let aggregatorMap = null; // Variable to hold the Google Map instance
-        let binMarkers = {};      // Object to store markers (Google Maps objects)
-        let updateInterval = null; // Variable to hold the interval timer
-        let infoWindow = null;     // Google Maps InfoWindow for popups
-
-        // ------------------------------------------------------------------
-        // MAP INITIALIZATION AND UPDATE LOGIC (FOR AGGREGATOR)
-        // ------------------------------------------------------------------
-        const initialBins = [
-            // Sample coordinates centered around Nairobi, Kenya
-            { id: 'H001', lat: -1.286389, lng: 36.817223, fill: 95, type: 'Plastic' },
-            { id: 'H002', lat: -1.300000, lng: 36.800000, fill: 50, type: 'Organic' },
-            { id: 'H003', lat: -1.250000, lng: 36.850000, fill: 80, type: 'Paper' },
-            { id: 'H004', lat: -1.320000, lng: 36.790000, fill: 20, type: 'Metal' }
-        ];
-
-        function getStatus(fill) {
-            if (fill >= 90) return 'red';
-            if (fill >= 70) return 'orange';
-            return 'green';
-        }
-
-        // Function required by the Google Maps API script for initialization
-        window.initMap = function () {
-            // Create a common InfoWindow to be reused
-            infoWindow = new google.maps.InfoWindow();
-
-            // The actual map initialization is deferred to showDashboard
-            console.log("Google Maps API loaded. Awaiting Aggregator tab click.");
-        }
-
-
-        function initAggregatorMap() {
-            // Check if map object already exists
-            if (aggregatorMap !== null) {
-                if (updateInterval === null) startRealTimeUpdates();
-                return;
-            }
-
-            // 1. Initialize Map: Centered roughly near Nairobi
-            const mapOptions = {
-                center: { lat: -1.286389, lng: 36.817223 },
-                zoom: 13,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            aggregatorMap = new google.maps.Map(document.getElementById('aggregator-map'), mapOptions);
-
-            // 2. Add initial markers
-            initialBins.forEach(bin => {
-                const status = getStatus(bin.fill);
-
-                const marker = new google.maps.Marker({
-                    position: { lat: bin.lat, lng: bin.lng },
-                    map: aggregatorMap,
-                    title: `Bin ${bin.id}`,
-                    // Custom marker icon based on status
-                    icon: getMarkerIcon(status)
-                });
-
-                // Add click listener to show InfoWindow
-                marker.addListener("click", () => {
-                    infoWindow.setContent(getInfoWindowContent(bin));
-                    infoWindow.open(aggregatorMap, marker);
-                });
-
-                // Store marker and data
-                binMarkers[bin.id] = { marker: marker, data: bin };
-            });
-
-            // 3. Start real-time update simulation
-            startRealTimeUpdates();
-        }
-
-        function getMarkerIcon(status) {
-            let color = 'green';
-            if (status === 'red') color = 'red';
-            if (status === 'orange') color = 'orange';
-
-            // Use Google's standard marker with a color to simulate status
-            return `http://maps.google.com/mapfiles/ms/icons/${color}-dot.png`;
-        }
-
-        function getInfoWindowContent(bin) {
-            return `
-                <div style="color: black; font-family: sans-serif;">
-                    <b>Bin ID: ${bin.id}</b><br>
-                    Fill: ${bin.fill}%<br>
-                    Type: ${bin.type}<br>
-                    Status: <span style="font-weight: bold; color: var(--color-status-${getStatus(bin.fill)});">${getStatus(bin.fill).toUpperCase()}</span>
-                </div>
-            `;
-        }
-
-
-        function updateBinData() {
-            // SIMULATION: Logic to update fill levels randomly for demonstration
-            Object.keys(binMarkers).forEach(id => {
-                const binData = binMarkers[id].data;
-                const marker = binMarkers[id].marker;
-
-                // Randomly change fill level
-                const change = Math.floor(Math.random() * 11) - 5; // -5 to +5
-                let newFill = Math.max(0, Math.min(100, binData.fill + change));
-
-                // Bias the change towards filling up
-                if (Math.random() > 0.5 && newFill < 100) {
-                    newFill = Math.min(100, newFill + (Math.random() > 0.8 ? 2 : 1));
-                }
-
-                binData.fill = newFill;
-                const newStatus = getStatus(newFill);
-
-                // 1. Update marker icon if status changes
-                marker.setIcon(getMarkerIcon(newStatus));
-
-                // 2. Update InfoWindow content (optional, only updates if the InfoWindow is currently open)
-                if (infoWindow && infoWindow.getMap() && infoWindow.getContent().includes(`Bin ID: ${id}`)) {
-                    infoWindow.setContent(getInfoWindowContent(binData));
-                }
-            });
-        }
-
-        function startRealTimeUpdates() {
-            if (updateInterval) clearInterval(updateInterval);
-            // Update data every 5 seconds (5000 milliseconds)
-            updateInterval = setInterval(updateBinData, 5000);
-        }
-
-        function stopRealTimeUpdates() {
-            if (updateInterval) {
-                clearInterval(updateInterval);
-                updateInterval = null;
-            }
-        }
-
-        // ------------------------------------------------------------------
-        // MAIN DASHBOARD SWITCHING LOGIC (RESTORED)
-        // ------------------------------------------------------------------
-        function showDashboard(id) {
-            // Deactivate all main nav buttons and view sections
-            document.querySelectorAll('.main-nav button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelectorAll('.dashboard-view').forEach(view => {
-                view.classList.remove('active');
-            });
-
-            // Activate the selected button and view
-            document.getElementById('btn-' + id).classList.add('active');
-            document.getElementById(id).classList.add('active');
-
-            // --- MAP SPECIFIC LOGIC ---
-            if (id === 'aggregator') {
-                if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-                    initAggregatorMap(); // Initialize and start updates when Aggregator is opened
-                } else {
-                    // Show a message if Google Maps hasn't loaded (usually due to missing API key)
-                    console.error("Google Maps not fully loaded. Check your API key.");
-                    document.getElementById('aggregator-map').innerHTML = '<p style="color: red; text-align: center; margin-top: 150px; font-weight: bold;">ERROR: Google Maps failed to load. Please check your API_KEY.</p>';
-                }
-            } else {
-                stopRealTimeUpdates(); // Stop updates when moving away from Aggregator
-            }
-
-            // Admin Panel Sub-section logic
-            if (id === 'admin') {
-                showAdminSection('admin-users');
-            }
-        }
-
-        // Admin sidebar logic (Restored)
-        function showAdminSection(id) {
-            document.querySelectorAll('.admin-sidebar button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelectorAll('.admin-content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById('admin-btn-' + id.split('-')[1]).classList.add('active');
-            document.getElementById(id).classList.add('active');
-        }
-
-        // Initialize the first view
-        document.addEventListener('DOMContentLoaded', () => {
-            showDashboard('home');
-        });
-    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
